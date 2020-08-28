@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000')
+const socket = io('https://morning-sands-76041.herokuapp.com/')
 const addBtns = document.querySelectorAll('.add-btn:not(.solid)');
 const saveItemBtns = document.querySelectorAll('.solid');
 const addItemContainers = document.querySelectorAll('.add-container');
