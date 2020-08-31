@@ -1,16 +1,20 @@
 const dotenv = require("dotenv")
 dotenv.config();
+const cors = require('cors');
 const path = require("path");
 const http = require('http');
 const express = require("express");
 const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server)
+const userRoutes = require('./Routes/userRoutes');
+require('./db');
 
-const users = {}
+app.use(express.json());
+app.use(cors());
+app.get('/',(req,res)=>res.send({msg:'hello'}))
+app.use(userRoutes);
 app.use(express.static(path.join(__dirname)));
-
-
 
 io.on('connection', socket => {
   socket.on('update-trello', updatedTrello => {

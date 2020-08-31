@@ -3,134 +3,196 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Drag and Drop</title>
+    <title>Register Page</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="./style.css" />
-    <script defer src="https://morning-sands-76041.herokuapp.com/socket.io/socket.io.js"></script>
-    <script defer src="script.js"></script>
-  </head>
-  <body>
-    <h1 class="main-title">Kanban Board</h1>
-    <!-- Script -->
-    <div class="drag-container">
-      <ul class="drag-list">
-        <!-- BackLog Coloum -->
-        <li class="drag-column backlog-column">
-          <span class="header">
-            <h1>Backlog</h1>
-          </span>
-          <!-- Backlog Content -->
-          <div class="backlog-content" class="custom-scroll">
-            <ul class="drag-item-list" id="backlog-list"  ondragover=allowDrop(event)
-            ondragenter=dragEnter(0)
-            ondrop=dropItem(event)
-           >
-             
-            </ul>
-          </div>
-          <!-- Add Button Group -->
-          <div class="add-btn-group">
-            <div class="add-btn" onclick=showInputBox(0)>
-              <span class="plus-sign">+</span>
-              <span>Add Item</span>
-            </div>
-            <div class="add-btn solid" onclick=hideInputBox(0)>
-              <span>Save Item</span>
-            </div>
-          </div>
-          <div class="add-container" contenteditable="true">
-            <textarea class="add-item"></textarea>
-          </div>
-        </li>
-
-        <!-- Complete Coloum -->
-        <li class="drag-column progress-column">
-          <span class="header">
-            <h1>Progress</h1>
-          </span>
-          <!-- Progress Content -->
-          <div class="progress-content" class="custom-scroll">
-            <ul class="drag-item-list" id="progress-list" ondragover=allowDrop(event)
-            ondragenter=dragEnter(1)
-            ondrop=dropItem(event)
-            >
-             
-            </ul>
-          </div>
-          <!-- Add Button Group -->
-          <div class="add-btn-group">
-            <div class="add-btn" onclick=showInputBox(1)>
-              <span class="plus-sign">+</span>
-              <span>Add Item</span>
-            </div>
-            <div class="add-btn solid" onclick=hideInputBox(1)>
-              <span>Save Item</span>
-            </div>
-          </div>
-          <div class="add-container" contenteditable="true">
-            <textarea class="add-item"></textarea>
-          </div>
-        </li>
-        <!-- Complete Coloum -->
-        <li class="drag-column complete-column">
-          <span class="header">
-            <h1>Complete</h1>
-          </span>
-          <!-- Complete Content -->
-          <div class="complete-content" class="custom-scroll">
-            <ul class="drag-item-list" id="complete-list" ondragover=allowDrop(event)
-            ondragenter=dragEnter(2)
-            ondrop=dropItem(event)>
-            
-            
-            </ul>
-          </div>
-          <!-- Add Button Group -->
-          <div class="add-btn-group">
-            <div class="add-btn" onclick=showInputBox(2)>
-              <span class="plus-sign">+</span>
-              <span>Add Item</span>
-            </div>
-            <div class="add-btn solid" onclick=hideInputBox(2)>
-              <span>Save Item</span>
-            </div>
-          </div>
-          <div class="add-container" contenteditable="true">
-            <textarea class="add-item"></textarea>
-          </div>
-       
-        </li>
-        <!-- Hold Coloum -->
-        <li class="drag-column on-hold-column">
-          <span class="header">
-            <h1>Hold</h1>
-          </span>
-          <!-- on-Hold Content -->
-          <div class="on-hold-content custom-scroll" >
-            <ul class="drag-item-list" id="on-hold-list" ondragover="allowDrop(event)"
-            ondragenter="dragEnter(3)"
-            ondrop="dropItem(event)"
-            >
-             
-            </ul>
-          </div>
-          <!-- Add Button Group -->
-          <div class="add-btn-group">
-            <div class="add-btn" onclick=showInputBox(3)>
-              <span class="plus-sign">+</span>
-              <span>Add Item</span>
-            </div>
-            <div class="add-btn solid" onclick=hideInputBox(3)>
-              <span>Save Item</span>
-            </div>
-          </div>
-          <div class="add-container" contenteditable="true">
-            <textarea class="add-item"></textarea>
-          </div>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css">
+    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="./register.js"></script>
     
-        </li>
-      </ul>
+    <script defer src="pages/pages.js"></script>
+    <script defer src="./script.js"></script>
+    
+
+  </head>
+  <style>
+    .custom-form {
+      border-radius: 30px;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      top: 40%;
+      left: 50%;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+    input:focus {
+      outline: none;
+      box-shadow: none !important;
+    }
+    body {
+      background-image: url("trees.jpg");
+      background-position: center;
+      background-size: cover;
+    }
+    form {
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    h1 {
+      color: #ffff;
+    }
+  </style>
+
+  <body id="root">
+
+    <div class="trello" style="visibility: hidden;">
+      <h1 class="main-title">Kanban Board</h1>
+      <!-- Script -->
+              <div class="drag-container">
+              <ul class="drag-list">
+                  <!-- BackLog Coloum -->
+                  <li class="drag-column backlog-column">
+                  <span class="header">
+                      <h1>Backlog</h1>
+                  </span>
+                  <!-- Backlog Content -->
+                  <div class="backlog-content" class="custom-scroll">
+                      <ul class="drag-item-list" id="backlog-list"  ondragover=allowDrop(event)
+                      ondragenter=dragEnter(0)
+                      ondrop=dropItem(event)
+                  >
+                      
+                      </ul>
+                  </div>
+          <!-- Add Button Group -->
+            <div class="add-btn-group">
+              <div class="add-btn" onclick=showInputBox(0)>
+                <span class="plus-sign">+</span>
+                <span>Add Item</span>
+              </div>
+              <div class="add-btn solid" onclick=hideInputBox(0)>
+                <span>Save Item</span>
+              </div>
+            </div>
+            <div class="add-container" contenteditable="true">
+              <textarea class="add-item"></textarea>
+            </div>
+          </li>
+  
+          <!-- Complete Coloum -->
+          <li class="drag-column progress-column">
+            <span class="header">
+              <h1>Progress</h1>
+            </span>
+            <!-- Progress Content -->
+            <div class="progress-content" class="custom-scroll">
+              <ul class="drag-item-list" id="progress-list" ondragover=allowDrop(event)
+              ondragenter=dragEnter(1)
+              ondrop=dropItem(event)
+              >
+                
+              </ul>
+            </div>
+            <!-- Add Button Group -->
+            <div class="add-btn-group">
+              <div class="add-btn" onclick=showInputBox(1)>
+                <span class="plus-sign">+</span>
+                <span>Add Item</span>
+              </div>
+              <div class="add-btn solid" onclick=hideInputBox(1)>
+                <span>Save Item</span>
+              </div>
+            </div>
+            <div class="add-container" contenteditable="true">
+              <textarea class="add-item"></textarea>
+            </div>
+          </li>
+          <!-- Complete Coloum -->
+          <li class="drag-column complete-column">
+            <span class="header">
+              <h1>Complete</h1>
+            </span>
+            <!-- Complete Content -->
+            <div class="complete-content" class="custom-scroll">
+              <ul class="drag-item-list" id="complete-list" ondragover=allowDrop(event)
+              ondragenter=dragEnter(2)
+              ondrop=dropItem(event)>
+              
+              
+              </ul>
+            </div>
+            <!-- Add Button Group -->
+            <div class="add-btn-group">
+              <div class="add-btn" onclick=showInputBox(2)>
+                <span class="plus-sign">+</span>
+                <span>Add Item</span>
+              </div>
+              <div class="add-btn solid" onclick=hideInputBox(2)>
+                <span>Save Item</span>
+              </div>
+            </div>
+            <div class="add-container" contenteditable="true">
+              <textarea class="add-item"></textarea>
+            </div>
+          
+          </li>
+          <!-- Hold Coloum -->
+          <li class="drag-column on-hold-column">
+            <span class="header">
+              <h1>Hold</h1>
+            </span>
+            <!-- on-Hold Content -->
+            <div class="on-hold-content custom-scroll" >
+              <ul class="drag-item-list" id="on-hold-list" ondragover="allowDrop(event)"
+              ondragenter="dragEnter(3)"
+              ondrop="dropItem(event)"
+              >
+                
+              </ul>
+            </div>
+            <!-- Add Button Group -->
+            <div class="add-btn-group">
+              <div class="add-btn" onclick=showInputBox(3)>
+                <span class="plus-sign">+</span>
+                <span>Add Item</span>
+              </div>
+              <div class="add-btn solid" onclick=hideInputBox(3)>
+                <span>Save Item</span>
+              </div>
+            </div>
+            <div class="add-container" contenteditable="true">
+              <textarea class="add-item"></textarea>
+            </div>
+      
+          </li>
+        </ul>
+      </div>
+   
     </div>
+    
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
     
   </body>
 </html>
