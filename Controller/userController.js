@@ -1,7 +1,6 @@
 const userModel = require('../models/user');
 
 module.exports={
-
     async userRegister(req,res){
 
         console.log('register',req.body);
