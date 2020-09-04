@@ -220,7 +220,7 @@ async function inviteUser(event){
   console.log('board id',currentBoard)
   try{
     
-    const emailSendResponse =  await fetch(`https://calm-mesa-67876.herokuapp.com/sendEmail/${event.target.email.value}/${currentBoard}`,{
+    const emailSendResponse =  await fetch(`http://localhost:3000/sendEmail/${event.target.email.value}/${currentBoard}`,{
           method:'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -316,7 +316,7 @@ async function removeBoard(event){
   console.log("removeBoard",event.target.boardName);
   document.querySelector('.create-board').remove();
   const userBoard=document.querySelector('.user-board');
-  const createBoard =  await fetch(`https://calm-mesa-67876.herokuapp.com/createBoard`,{
+  const createBoard =  await fetch(`http://localhost:3000/createBoard`,{
         method:'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -345,7 +345,7 @@ async function removeBoard(event){
 
 async function getTrelloData(_id){
   currentBoard=_id;
-  const trelloDataResponse = await fetch(`https://calm-mesa-67876.herokuapp.com/getTrelloData/${_id}`,{
+  const trelloDataResponse = await fetch(`http://localhost:3000/getTrelloData/${_id}`,{
       method:'GET',
       headers:{
           'Content-Type':'application/json',
@@ -355,7 +355,7 @@ async function getTrelloData(_id){
   });
   
   const trelloData = await trelloDataResponse.json();
-  console.log('trello datat',trelloData);
+  console.log('trello data',trelloData);
   // console.log(userData.user[0]);
   if(trelloData.board){
     console.log(trelloData.board);
@@ -380,12 +380,14 @@ function goToTrelloPage(event,board_id,refBoardId){
     console.log('ref');
     refBoard=refBoardId;
     currentBoard=board_id;
+    alert(`join Romm ${refBoardId}`);
     socket.emit('joinRoom',refBoardId);//updated
   }
   else{
     refBoard=null;
     currentBoard=board_id;
     console.log('id');
+    alert(`join Room ${board_id}`);
     socket.emit('joinRoom',board_id);
   }
   console.log(board_id);

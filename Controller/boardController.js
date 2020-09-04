@@ -29,7 +29,7 @@ module.exports={
 		try{
             let trelloData;
             const boardQuery =  boardModel.find({});
-            console.log(req.userId);
+            // console.log(req.userId);
             trelloData =  await boardQuery.find({userId:req.userId});
             // console.log('board',trelloData);
             // console.log("ref",boardData[0].refBoardId);

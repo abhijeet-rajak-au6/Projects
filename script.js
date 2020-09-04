@@ -1,6 +1,6 @@
   // localStorage.clear();
   console.log("hello");
-  const socket = io("https://calm-mesa-67876.herokuapp.com/");
+  const socket = io("http://localhost:3000/");
   console.log(socket);
   const addBtns = document.querySelectorAll(".add-btn:not(.solid)");
   console.log(addBtns);
@@ -133,7 +133,7 @@
 
   // update the item  if ncesessary delete the item also
 
-  function updateItem(col, idx) {
+  async function updateItem(col, idx) {
     const updateParticularColumn = itemLists[col];
     const updateParticularItem = updateParticularColumn.children[idx];
 
@@ -147,17 +147,21 @@
       }
       updateDOM();
       console.log('current Board',currentBoard);
-      console.log('ref Board',refBoard);
-      if(refBoard!=undefined)
-        socket.emit("update-trello",refBoard,listArray);
+      let trelloData = await getBoardDetails(currentBoard);
+      console.log('trello Data=',trelloData);
+      console.log(trelloData.board.refBoardId!==null);
+      console.log(trelloData.board.refBoardId);
+      console.log(trelloData.board._id);
+      if(trelloData.board.refBoardId!==null)
+        socket.emit("update-trello",trelloData.board.refBoardId,listArray);
       else
-        socket.emit("update-trello",currentBoard,listArray);
+        socket.emit("update-trello",trelloData.board._id,listArray);
       uploadTrelloDataToDB();
     }
   }
 
   // adding item to col
-  function addItemtoColumn(col) {
+  async function addItemtoColumn(col) {
     // checkAuth();
     const itemText = addItems[col].value;
     if(itemText){
@@ -168,11 +172,12 @@
       updateDOM();
       // socket.emit("update-trello",refBoard ,listArray);
       console.log('current Board',currentBoard);
-      console.log('ref Board',refBoard);
-      if(refBoard!=undefined)
-        socket.emit("update-trello",refBoard,listArray);
+      let trelloData = await getBoardDetails(currentBoard);
+      console.log('trello Data=',trelloData);
+      if(trelloData.board.refBoardId!==null)
+        socket.emit("update-trello",trelloData.board.refBoardId,listArray);
       else
-        socket.emit("update-trello",currentBoard,listArray);
+        socket.emit("update-trello",trelloData.board._id,listArray);
       uploadTrelloDataToDB();
     }
   }
@@ -240,7 +245,20 @@
     currentColumn = col;
   }
 
-  function dropItem(event) {
+  async function  getBoardDetails(currentBoard){
+    const response = await fetch(`http://localhost:3000/getTrelloData/${currentBoard}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': JSON.parse(localStorage.getItem("user")).acessToken,
+      },
+    });
+
+    const trelloData = response.json();
+     return trelloData;
+  }
+
+  async function dropItem(event) {
     event.preventDefault();
     itemLists.forEach((col) => col.classList.remove("over"));
     let parent = itemLists[currentColumn];
@@ -249,11 +267,12 @@
     updateArray();
     // console.log('refBoard',refBoard);
     console.log('current Board',currentBoard);
-    console.log('ref Board',refBoard);
-    if(refBoard!=undefined)
-      socket.emit("update-trello",refBoard,listArray);
+    let trelloData = await getBoardDetails(currentBoard);
+    console.log('trello Data=',trelloData);
+    if(trelloData.board.refBoardId!==null)
+      socket.emit("update-trello",trelloData.board.refBoardId,listArray);
     else
-      socket.emit("update-trello",currentBoard,listArray);
+      socket.emit("update-trello",trelloData.board._id,listArray);
     uploadTrelloDataToDB();
   }
 

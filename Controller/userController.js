@@ -62,7 +62,7 @@ module.exports={
 			console.log("iam in upload data");
 			// console.log(req.body);
 			const {_id}=req.params;
-			console.log(_id);
+			// console.log(_id);
 			const boardData = await boardModel.findById(_id);
 			let userData1;
 			let userData2;

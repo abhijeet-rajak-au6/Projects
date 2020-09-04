@@ -26,8 +26,9 @@ io.on('connection', socket => {
   });
 
   socket.on('update-trello', (room,updatedTrello) => {
-    console.log("updated Trello=",updatedTrello);
+    // console.log("updated Trello=",updatedTrello);
     console.log('roomid',room);
+    console.log('------------------')
     socket.to(room).emit('trello', updatedTrello,room);
   })
   // socket.on('send-chat-message', message => {
