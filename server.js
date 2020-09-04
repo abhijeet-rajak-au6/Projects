@@ -8,12 +8,14 @@ const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server)
 const userRoutes = require('./Routes/userRoutes');
+const dataRoutes = require('./Routes/dataRoutes');
 require('./db');
 
 app.use(express.json());
 app.use(cors());
 app.get('/',(req,res)=>res.send({msg:'hello'}))
 app.use(userRoutes);
+app.use(dataRoutes);
 app.use(express.static(path.join(__dirname)));
 
 io.on('connection', socket => {

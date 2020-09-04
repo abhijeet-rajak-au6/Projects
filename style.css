@@ -3,6 +3,7 @@
 
 html {
   box-sizing: border-box;
+
 }
 
 :root {
@@ -210,6 +211,11 @@ ul {
   color: black;
   padding: 10px;
 }
+
+.user-board-item:not(:last-child){
+  margin-right:10px;
+}
+
 
 .add-item:focus {
   outline: none;

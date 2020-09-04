@@ -13,6 +13,7 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="style.css">
+    <script>localStorage.clear()</script>
     <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script defer src="./register.js"></script>
     
@@ -22,12 +23,16 @@
 
   </head>
   <style>
+    .invite-form{
+      background-color:#ffff;
+    }
     .custom-form {
       border-radius: 30px;
       transform: translate(-50%, -50%);
       position: absolute;
       top: 40%;
       left: 50%;
+     
     }
     .btn-group {
       display: flex;
@@ -43,15 +48,16 @@
       background-position: center;
       background-size: cover;
     }
-    form {
+    .register,.login{
       background-color: rgba(0, 0, 0, 0.4);
     }
     h1 {
       color: #ffff;
     }
+    
   </style>
 
-  <body id="root">
+  <body id="root" >
 
     <div class="trello" style="visibility: hidden;">
       <h1 class="main-title">Kanban Board</h1>

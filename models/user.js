@@ -33,16 +33,16 @@ const userSchema = Schema({
         type:String,
         required:[true,"Please provide your password"]
     },
-    onHoldItems:[],
-    progressItems:[],
-    backlogItems:[],
-    completeItems:[]
+    // onHoldItems:[],
+    // progressItems:[],
+    // backlogItems:[],
+    // completeItems:[]
 })
 
 userSchema.methods.generateToken = async function(){
     console.log(process.env.PRIVATE_KEY);
     this.token = sign ({id:this._id},process.env.PRIVATE_KEY,{
-        expiresIn:60*1
+        expiresIn:60*10
     })
     console.log("hi")
 }

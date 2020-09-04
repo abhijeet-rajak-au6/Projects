@@ -1,4 +1,5 @@
-
+  // localStorage.clear();
+  console.log("hello");
   const socket = io("http://localhost:3000");
   console.log(socket);
   const addBtns = document.querySelectorAll(".add-btn:not(.solid)");
@@ -92,7 +93,7 @@
 
     columnEl.append(listEl);
   }
-
+  
   // Update Columns in DOM - Reset HTML, Filter Array, Update localStorage
   function updateDOM() {
     // Check localStorage once
@@ -146,18 +147,23 @@
       }
       updateDOM();
       socket.emit("update-trello", listArray);
+      uploadTrelloDataToDB();
     }
   }
 
   // adding item to col
   function addItemtoColumn(col) {
-    checkAuth();
+    // checkAuth();
     const itemText = addItems[col].value;
-    listArray[col].push(itemText);
-    addItems[col].value = "";
-    console.log("list Array", listArray[col]);
-    updateDOM();
-    socket.emit("update-trello", listArray);
+    if(itemText){
+
+      listArray[col].push(itemText);
+      addItems[col].value = "";
+      console.log("list Array", listArray[col]);
+      updateDOM();
+      socket.emit("update-trello", listArray);
+      uploadTrelloDataToDB();
+    }
   }
 
   // Show Input Box
@@ -231,6 +237,7 @@
     draggable = false;
     updateArray();
     socket.emit("update-trello", listArray);
+    uploadTrelloDataToDB();
   }
 
   socket.on("trello", (message) => {
@@ -242,13 +249,13 @@
 
   // Check authentication when an event is occured
 
-  async function checkAuth() {
-    const response = await fetch(`http://localhost:3000/checkAuth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: JSON.parse(localStorage.getItem("user")).acessToken,
-      },
-    });
-    console.log(response);
-  }
+  // async function checkAuth() {
+  //   const response = await fetch(`http://localhost:3000/checkAuth`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: JSON.parse(localStorage.getItem("user")).acessToken,
+  //     },
+  //   });
+  //   console.log(response);
+  // }

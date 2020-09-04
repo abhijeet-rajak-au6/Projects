@@ -5,6 +5,13 @@ const boardSchema = Schema({
     userId:{
         type:Schema.Types.ObjectId
     },
+    refBoardId:{
+        type:Schema.Types.ObjectId,
+        default:null
+    },
+    boardName:{
+        type:String
+    },
     onHoldItems:[],
     progressItems:[],
     backlogItems:[],
@@ -12,6 +19,6 @@ const boardSchema = Schema({
 });
 
 const boardModel = model('board',boardSchema);
-module.export = boardModel;
+module.exports= boardModel;
 
 

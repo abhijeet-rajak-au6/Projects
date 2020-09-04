@@ -1,6 +1,9 @@
+
+let currentBoard;
+
 function renderLoginPage(){
 
-    return `<form onsubmit="login(event)" style="border: 1px solid black"  class="w-50 custom-form mx-auto">
+    return `<form  onsubmit="login(event)" style="border: 1px solid black"  class="w-50 custom-form mx-auto login">
                 <h1 style="text-align: center;">Login</h1>
                 <div class="form-group">
                 <input type="email" class="form-control w-75 mx-auto mt-3" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" name="userEmail">
@@ -32,7 +35,7 @@ function renderLoginPage(){
 }
 
 function renderRegisterPage(){
-      return `<form onsubmit="register(event)" style="border: 1px solid black" class="w-50 custom-form mx-auto">
+      return `<form  onsubmit="register(event)" style="border: 1px solid black" class="w-50 custom-form mx-auto register">
                   <h1 style="text-align: center">Register</h1>
                   <div class="form-group">
                   <input
@@ -211,40 +214,83 @@ function renderTrelloPage(){
     `
 }
 
+async function inviteUser(event){
+  event.preventDefault();
+  console.log('board id',currentBoard)
+  try{
+    
+    const emailSendResponse =  await fetch(`http://localhost:3000/sendEmail/${event.target.email.value}/${currentBoard}`,{
+          method:'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':JSON.parse(localStorage.getItem('user')).acessToken
+          },
+      })
+      console.log(emailSendResponse);
+      if (!emailSendResponse.ok) {
+        throw new Error((await emailSendResponse.json()).msg);
+      }
+  }
+  catch(err){
+    console.log(err);
+    alert(err);
+  }
+}
+
 function renderNavBar(){
+  console.log(currentBoard);
   return ` <nav style="z-index:9999" class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Trello Clone</a>
+  <a class="navbar-brand" href="#">Trello Clone</a> 
+  <form onsubmit="inviteUser(event)" style="visibility:hidden" class="form-inline my-2 my-lg-0 invite-form">
+      <input class="form-control mr-sm-2" type="search" name="email" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  </form>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
+  
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#" onclick="removeElementFromDOM(renderRegisterPage,document.querySelector('form'))">Register</a>
+        <a class="nav-link" href="#" onclick="removeElementFromDOM(renderRegisterPage,document.querySelector('.login'))">Register</a>
       </li>
       <li class="nav-item">
-      <a class="nav-link" href="#"  onclick="removeElementFromDOM(renderLoginPage,document.querySelector('form'))">Login</a>
+      <a class="nav-link" href="#"  onclick="removeElementFromDOM(renderLoginPage,document.querySelector('.register'))">Login</a>
     </li>
     </ul>
   </div>
 </nav>`
 }
 
-function boardPage(){
+function createBoard(){
 
+  console.log(JSON.parse(localStorage.getItem('user')).userName);
   return `
-  
-    <h1> Welcome ${JSON.parse((localStorage.getItem('user')).userName)} </h1>
-     
+  <div class="board-container">
+    <h1 style="text-align:center">Current Board</h1>
+    <div style="display:flex; flex-wrap:wrap;" class="user-board">
+
+    </div>
+    <button onclick="createBoardPage(event)" class="btn btn-success">Create Board</button>
+    </div>
   `
 }
+function acceptInvitation(){
+  console.log("helloooooo");
+}
 
-function createBoard(){
+
+function createBoardPage(event){
+  console.log("triggered");
+  // document.querySelector('.invite').style.visibility='hidden';
+  injectElementToDOM(boardPage);
+}
+
+function boardPage(){
   return `
-    <div>
-      <form onsubmit="register(event)" style="border: 1px solid black" class="w-50 custom-form mx-auto">
-      <h1 style="text-align: center">Register</h1>
+    <div class="create-board" style="height:100vh">
+      <form onsubmit="removeBoard(event)" style="border: 1px solid black" class="w-50 custom-form mx-auto">
+      <h1 style="text-align: center">Create Board</h1>
       <div class="form-group">
         <input
             type="text"
@@ -255,12 +301,86 @@ function createBoard(){
             name="boardName"
         />
         <div class="btn-group">
-          <button  type="submit" class="btn btn-primary mb-3">Create Board</button>
+          <button type="submit" class="btn btn-primary mb-3 mt-3">Create</button>
         </div>
     </form>
     </div>
     </div>
   `
+
+}
+
+async function removeBoard(event){
+  event.preventDefault();
+  console.log("removeBoard",event.target.boardName);
+  document.querySelector('.create-board').remove();
+  const userBoard=document.querySelector('.user-board');
+  const createBoard =  await fetch(`http://localhost:3000/createBoard`,{
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':JSON.parse(localStorage.getItem('user')).acessToken
+        },
+        body: JSON.stringify({
+          boardName:event.target.boardName.value
+        })
+    })
+    const createBoardData = await createBoard.json();
+    console.log(createBoardData);
+
+  let board =`
+    <div onclick=goToTrelloPage(event,'${createBoardData.boardDetail._id}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
+    background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin-top:10px">
+      <h3>${event.target.boardName.value}</h3>
+      <label style="visbility:hidden" class="board-id"></label>
+    </div>
+  `
+  if(event.target.boardName.value){
+    console.log('userBoard',userBoard);
+    userBoard.insertAdjacentHTML('afterbegin',board);
+      
+  }
+}
+
+async function getTrelloData(_id){
+  currentBoard=_id;
+  const trelloDataResponse = await fetch(`http://localhost:3000/getTrelloData/${_id}`,{
+      method:'GET',
+      headers:{
+          'Content-Type':'application/json',
+          'Authorization':JSON.parse(localStorage.getItem('user')).acessToken
+      },
+     
+  });
+  
+  const trelloData = await trelloDataResponse.json();
+  console.log('trello datat',trelloData);
+  // console.log(userData.user[0]);
+  if(trelloData.board){
+    console.log(trelloData.board);
+    console.log("user Data",trelloData.board.completeItems);
+    completeListArray=trelloData.board.completeItems;
+    backlogListArray=trelloData.board.backlogItems;
+    progressListArray=trelloData.board.progressItems;
+    onHoldListArray=trelloData.board.onHoldItems;
+    console.log(completeListArray,backlogListArray,progressListArray,onHoldListArray);
+    listArray=[backlogListArray,progressListArray,completeListArray,onHoldListArray];
+    console.log('list Array',listArray);
+    updateDOM();
+  }
+
+}
+
+function goToTrelloPage(event,board_id){
+  console.log(board_id);
+  removeElementFromDOM(null,document.querySelector('.trello'),document.querySelector('.board-container'));
+  setTimeout(()=>{
+        document.querySelectorAll('.add-btn').forEach(addBtn=>addBtn.style.visibility='visible');
+        document.querySelector('.trello').style.visibility='visible';
+        document.querySelector('.invite-form').style.visibility='visible';
+    },500);
+    getTrelloData(board_id);
+    
 }
 
 injectElementToDOM(renderNavBar);
