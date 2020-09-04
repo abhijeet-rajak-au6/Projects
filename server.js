@@ -12,12 +12,12 @@ const dataRoutes = require('./Routes/dataRoutes');
 require('./db');
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname)));
 app.use(cors());
-app.get('/',(req,res)=>res.send({msg:'hello'}))
 app.use(userRoutes);
 app.use(dataRoutes);
-app.use(express.static(path.join(__dirname)));
 
+app.get('/',(req,res)=>res.send({msg:'hello'}))
 io.on('connection', socket => {
 
   socket.on('joinRoom',(room)=>{
