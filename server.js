@@ -10,10 +10,10 @@ const io = require('socket.io')(server)
 const userRoutes = require('./Routes/userRoutes');
 const dataRoutes = require('./Routes/dataRoutes');
 require('./db');
-
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
-app.use(cors());
+
 app.use(userRoutes);
 app.use(dataRoutes);
 
