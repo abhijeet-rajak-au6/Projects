@@ -146,7 +146,12 @@
         listArray[col].splice(idx, 1);
       }
       updateDOM();
-      socket.emit("update-trello", listArray);
+      console.log('current Board',currentBoard);
+      console.log('ref Board',refBoard);
+      if(refBoard!=undefined)
+        socket.emit("update-trello",refBoard,listArray);
+      else
+        socket.emit("update-trello",currentBoard,listArray);
       uploadTrelloDataToDB();
     }
   }
@@ -161,7 +166,13 @@
       addItems[col].value = "";
       console.log("list Array", listArray[col]);
       updateDOM();
-      socket.emit("update-trello", listArray);
+      // socket.emit("update-trello",refBoard ,listArray);
+      console.log('current Board',currentBoard);
+      console.log('ref Board',refBoard);
+      if(refBoard!=undefined)
+        socket.emit("update-trello",refBoard,listArray);
+      else
+        socket.emit("update-trello",currentBoard,listArray);
       uploadTrelloDataToDB();
     }
   }
@@ -236,12 +247,19 @@
     parent.append(draggableItem);
     draggable = false;
     updateArray();
-    socket.emit("update-trello", listArray);
+    // console.log('refBoard',refBoard);
+    console.log('current Board',currentBoard);
+    console.log('ref Board',refBoard);
+    if(refBoard!=undefined)
+      socket.emit("update-trello",refBoard,listArray);
+    else
+      socket.emit("update-trello",currentBoard,listArray);
     uploadTrelloDataToDB();
   }
 
-  socket.on("trello", (message) => {
+  socket.on("trello", (message,room) => {
     console.log("message", message);
+    console.log('room',room);
     listArray = message;
     updateSavedColumns();
     updateDOM();

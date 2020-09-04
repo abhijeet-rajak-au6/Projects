@@ -1,5 +1,6 @@
 
 let currentBoard;
+let refBoard;
 
 function renderLoginPage(){
 
@@ -329,7 +330,7 @@ async function removeBoard(event){
     console.log(createBoardData);
 
   let board =`
-    <div onclick=goToTrelloPage(event,'${createBoardData.boardDetail._id}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
+    <div onclick=goToTrelloPage(event,'${createBoardData.boardDetail._id}','${createBoardData.boardDetail.refBoardId}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
     background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin-top:10px">
       <h3>${event.target.boardName.value}</h3>
       <label style="visbility:hidden" class="board-id"></label>
@@ -371,7 +372,22 @@ async function getTrelloData(_id){
 
 }
 
-function goToTrelloPage(event,board_id){
+function goToTrelloPage(event,board_id,refBoardId){
+  console.log('refBoard id',refBoardId);
+  console.log('refBoard id',typeof refBoardId);
+
+  if(refBoardId!="null"){
+    console.log('ref');
+    refBoard=refBoardId;
+    currentBoard=board_id;
+    socket.emit('joinRoom',refBoardId);//updated
+  }
+  else{
+    refBoard=null;
+    currentBoard=board_id;
+    console.log('id');
+    socket.emit('joinRoom',board_id);
+  }
   console.log(board_id);
   removeElementFromDOM(null,document.querySelector('.trello'),document.querySelector('.board-container'));
   setTimeout(()=>{

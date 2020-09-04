@@ -31,7 +31,7 @@ module.exports={
             const boardQuery =  boardModel.find({});
             console.log(req.userId);
             trelloData =  await boardQuery.find({userId:req.userId});
-            console.log('board',trelloData);
+            // console.log('board',trelloData);
             // console.log("ref",boardData[0].refBoardId);
 
             // if(boardData[0].refBoardId){
@@ -41,7 +41,7 @@ module.exports={
             // else{
             //     trelloData = await boardModel.find({userId:req.userId});
             // }
-            console.log('trello Data',trelloData);
+            // console.log('trello Data',trelloData);
 			return res.status(200).send({
 				status:'success',
 				user:trelloData

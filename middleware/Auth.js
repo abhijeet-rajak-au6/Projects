@@ -9,9 +9,9 @@ module.exports={
 
             const decodedToken = verify(req.headers.authorization,process.env.PRIVATE_KEY)
             console.log(decodedToken.id)
-            console.log("one")
+            // console.log("one")
             req.userId = decodedToken.id
-            console.log("r")
+            // console.log("r")
             if(req.url!=="/checkAuth")
                 next()
 

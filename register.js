@@ -108,9 +108,9 @@ async function renderBoardPage() {
       'Authorization': JSON.parse(localStorage.getItem("user")).acessToken,
     },
   });
-  console.log(responseData);
+  // console.log(responseData);
   const userData = await responseData.json();
-  console.log(userData);
+  console.log('userData',userData);
   // console.log(userData.user[0]);
   // console.log("user Data",userData.user.completeItems);
   // completeListArray=userData.user.completeItems;
@@ -138,7 +138,7 @@ async function renderBoardPage() {
   userData.user.forEach((boardDetail) => {
     console.log("board Name", boardDetail.boardName);
     let board = `
-                    <div onclick=goToTrelloPage(event,'${boardDetail._id}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
+                    <div onclick=goToTrelloPage(event,'${boardDetail._id}','${boardDetail.refBoardId}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
                     background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin-top:10px">
                     <h3>${boardDetail.boardName}</h3>
                     </div>

@@ -77,8 +77,8 @@ module.exports={
 				userData1= await boardModel.findByIdAndUpdate({_id:_id},{...req.body},{new:true});
 				userData2= await boardModel.findOneAndUpdate({refBoardId:_id},{...req.body},{new:true});
 			}
-			console.log('userData1',userData1);
-			console.log('userData2',userData2);
+			// console.log('userData1',userData1);
+			// console.log('userData2',userData2);
 			return res.status(200).send({
 				status:'sucess',
 				// userData

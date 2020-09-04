@@ -19,9 +19,16 @@ app.use(dataRoutes);
 app.use(express.static(path.join(__dirname)));
 
 io.on('connection', socket => {
-  socket.on('update-trello', updatedTrello => {
+
+  socket.on('joinRoom',(room)=>{
+    console.log('joined room', room);
+    socket.join(room);
+  });
+
+  socket.on('update-trello', (room,updatedTrello) => {
     console.log("updated Trello=",updatedTrello);
-    socket.broadcast.emit('trello', updatedTrello);
+    console.log('roomid',room);
+    socket.to(room).emit('trello', updatedTrello,room);
   })
   // socket.on('send-chat-message', message => {
   //   socket.broadcast.emit('chat-message', { message: message, name: users[socket.id] })
