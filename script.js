@@ -1,6 +1,6 @@
   // localStorage.clear();
   console.log("hello");
-  const socket = io("http://localhost:3000/");
+  const socket = io("https://calm-mesa-67876.herokuapp.com/");
   console.log(socket);
   const addBtns = document.querySelectorAll(".add-btn:not(.solid)");
   console.log(addBtns);
@@ -246,7 +246,7 @@
   }
 
   async function  getBoardDetails(currentBoard){
-    const response = await fetch(`http://localhost:3000/getTrelloData/${currentBoard}`, {
+    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/getTrelloData/${currentBoard}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

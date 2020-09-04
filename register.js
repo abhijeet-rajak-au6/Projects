@@ -70,7 +70,7 @@ async function register(event) {
       userEmail: userEmail.value,
       password: userPassword.value,
     };
-    const response = await fetch(`http://localhost:3000/register`, {
+    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ async function renderBoardPage() {
    console.log(document.querySelector(".invite-form"));
   document.querySelector(".invite-form").style.visibility = "hidden";
 
-  const responseData = await fetch(`http://localhost:3000/getUserData`, {
+  const responseData = await fetch(`https://calm-mesa-67876.herokuapp.com/getUserData`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -160,7 +160,7 @@ async function login(event) {
     password: userPassword.value,
   };
   try {
-    const response = await fetch(`http://localhost:3000/login`, {
+    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -193,7 +193,7 @@ async function uploadTrelloDataToDB() {
     const progressItems = JSON.parse(localStorage.getItem("progressItems"));
     const completeItems = JSON.parse(localStorage.getItem("completeItems"));
     const onHoldItems = JSON.parse(localStorage.getItem("onHoldItems"));
-    const response = await fetch(`http://localhost:3000/uploadData/${_id}`, {
+    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/uploadData/${_id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -215,7 +215,7 @@ async function uploadTrelloDataToDB() {
 async function logout(event) {
   try {
     document.querySelector(".invite-form").style.visibility = "hidden";
-    const response = await fetch(`http://localhost:3000/logout`, {
+    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/logout`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
