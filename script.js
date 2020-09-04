@@ -1,6 +1,6 @@
   // localStorage.clear();
   console.log("hello");
-  const socket = io("http://localhost:3000");
+  const socket = io("https://tranquil-plains-09028.herokuapp.com/");
   console.log(socket);
   const addBtns = document.querySelectorAll(".add-btn:not(.solid)");
   console.log(addBtns);
