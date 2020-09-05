@@ -22,6 +22,8 @@ io.on('connection', socket => {
 
   socket.on('joinRoom',(room)=>{
     console.log('joined room', room);
+    if(socket.room)
+      socket.leave(socket.room);
     socket.join(room);
   });
 
