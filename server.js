@@ -25,6 +25,7 @@ io.on('connection', socket => {
     if(socket.room)
       socket.leave(socket.room);
     socket.join(room);
+    socket.room = room;
   });
 
   socket.on('update-trello', (room,updatedTrello) => {
