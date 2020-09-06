@@ -220,7 +220,7 @@ async function inviteUser(event){
   console.log('board id',currentBoard)
   try{
     
-    const emailSendResponse =  await fetch(`https://calm-mesa-67876.herokuapp.com/sendEmail/${event.target.email.value}/${currentBoard}`,{
+    const emailSendResponse =  await fetch(`http://localhost:3000/sendEmail/${event.target.email.value}/${currentBoard}`,{
           method:'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -268,22 +268,19 @@ function createBoard(){
   console.log(JSON.parse(localStorage.getItem('user')).userName);
   return `
   <div class="board-container">
-    <h1 style="text-align:center">Current Board</h1>
+  <h1 style="text-align:center">Current Board</h1>
+  <button onclick="createBoardPage(event)" class="btn btn-success d-block mx-auto mb-5">Create Board</button>
     <div style="display:flex; flex-wrap:wrap;" class="user-board">
 
     </div>
-    <button onclick="createBoardPage(event)" class="btn btn-success">Create Board</button>
     </div>
   `
 }
-function acceptInvitation(){
-  console.log("helloooooo");
-}
-
 
 function createBoardPage(event){
   console.log("triggered");
   // document.querySelector('.invite').style.visibility='hidden';
+  document.querySelector('.board-container').style.visibility='hidden';
   injectElementToDOM(boardPage);
 }
 
@@ -316,7 +313,9 @@ async function removeBoard(event){
   console.log("removeBoard",event.target.boardName);
   document.querySelector('.create-board').remove();
   const userBoard=document.querySelector('.user-board');
-  const createBoard =  await fetch(`https://calm-mesa-67876.herokuapp.com/createBoard`,{
+  userBoard.innerHTML="";
+  document.querySelector('.board-container').style.visibility='visible';
+  const createBoard =  await fetch(`http://localhost:3000/createBoard`,{
         method:'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -327,25 +326,31 @@ async function removeBoard(event){
         })
     })
     const createBoardData = await createBoard.json();
-    console.log(createBoardData);
+    renderBoardPage();
 
-  let board =`
-    <div onclick=goToTrelloPage(event,'${createBoardData.boardDetail._id}','${createBoardData.boardDetail.refBoardId}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
-    background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin-top:10px">
-      <h3>${event.target.boardName.value}</h3>
-      <label style="visbility:hidden" class="board-id"></label>
-    </div>
-  `
-  if(event.target.boardName.value){
-    console.log('userBoard',userBoard);
-    userBoard.insertAdjacentHTML('afterbegin',board);
+  //   console.log(createBoardData);
+  //   let board =` <div class="user-board-container" style=" background-color:rgba(0, 0, 0, 0.4); border-radius:5px;margin: 20px;
+  //   border: 1px solid white;">
+  //                 <div  class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center; flex-wrap:wrap;
+  //                  margin-top:10px; position:relative">
+  //                  <a onclick=deleteBoard(event,'${createBoardData.boardDetail._id}') style="position: absolute;top: 9px;left: 87%; z-index:9999"><i  class="far fa-trash-alt"></i></a>
+  //                  <h3>${event.target.boardName.value}</h3>
+  //                  </div>
+  //                  <div class="button-container" style="display:flex;justify-content:center">
+  //                  <button style="width:100px" onclick=goToTrelloPage(event,'${createBoardData.boardDetail._id}','${createBoardData.boardDetail.refBoardId}') class="btn btn-success mt-3">Go</button>
+  //                  </div>
+  //                  </div>`
+  
+  // if(event.target.boardName.value){
+  //   console.log('userBoard',userBoard);
+  //   userBoard.insertAdjacentHTML('afterbegin',board);
       
-  }
+  // }
 }
 
 async function getTrelloData(_id){
   currentBoard=_id;
-  const trelloDataResponse = await fetch(`https://calm-mesa-67876.herokuapp.com/getTrelloData/${_id}`,{
+  const trelloDataResponse = await fetch(`http://localhost:3000/getTrelloData/${_id}`,{
       method:'GET',
       headers:{
           'Content-Type':'application/json',

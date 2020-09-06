@@ -3,40 +3,46 @@ function removeElementFromDOM(pageRender, ...elementToBeRemoved) {
   // head.insertAdjacentHTML('beforeend',' <link rel="stylesheet" href="./style.css" />');
   console.log("element to be removed", elementToBeRemoved);
 
-  elementToBeRemoved.forEach((element) => {
-    console.log(element.className);
-    console.log(element.className !== "trello");
-    if (element.className !== "trello") element.remove();
-  });
+  try{
 
-  const ul = document.querySelector(".navbar-nav");
-
-  console.log("unordered list", ul);
-  if (localStorage.getItem("user") && ul) {
-    Array.from(ul.children).forEach((child) => child.remove());
-    ul.innerHTML = `
-        <li class="nav-item text-dark p-2">
-        ${JSON.parse(localStorage.getItem("user")).userName}
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" href="#" onclick="goToCreateBoard(event)">Create Board</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
-        </li>
-        `;
-    const head = document.querySelector("head");
-
-    // body.insertAdjacentHTML('beforeend',`<script async=false src="./script.js"></script>`)
-  } else if (ul && !localStorage.getItem("user")) {
-    ul.innerHTML = `<li class="nav-item">
-        <a class="nav-link" href="#" onclick="removeElementFromDOM(renderRegisterPage,document.querySelector('.login'))">Register</a>
-        </li>
-        <li class="nav-item">
-        <a class="nav-link" href="#"  onclick="removeElementFromDOM(renderLoginPage,document.querySelector('.register'))">Login</a>
-        </li>`;
+    elementToBeRemoved.forEach((element) => {
+      console.log(element.className);
+      console.log(element.className !== "trello");
+      if (element.className !== "trello") element.remove();
+    });
+  
+    const ul = document.querySelector(".navbar-nav");
+  
+    console.log("unordered list", ul);
+    if (localStorage.getItem("user") && ul) {
+      Array.from(ul.children).forEach((child) => child.remove());
+      ul.innerHTML = `
+          <li class="nav-item text-dark p-2">
+          ${JSON.parse(localStorage.getItem("user")).userName}
+          </li>
+          <li class="nav-item">
+          <a class="nav-link" href="#" onclick="goToCreateBoard(event)">Create Board</a>
+          </li>
+          <li class="nav-item">
+          <a class="nav-link" href="#" onclick="logout(event)">Logout</a>
+          </li>
+          `;
+      const head = document.querySelector("head");
+  
+      // body.insertAdjacentHTML('beforeend',`<script async=false src="./script.js"></script>`)
+    } else if (ul && !localStorage.getItem("user")) {
+      ul.innerHTML = `<li class="nav-item">
+          <a class="nav-link" href="#" onclick="removeElementFromDOM(renderRegisterPage,document.querySelector('.login'))">Register</a>
+          </li>
+          <li class="nav-item">
+          <a class="nav-link" href="#"  onclick="removeElementFromDOM(renderLoginPage,document.querySelector('.register'))">Login</a>
+          </li>`;
+    }
+    if (pageRender != null) injectElementToDOM(pageRender);
   }
-  if (pageRender != null) injectElementToDOM(pageRender);
+  catch(err){
+    
+  }
 }
 
 function goToCreateBoard() {
@@ -70,7 +76,7 @@ async function register(event) {
       userEmail: userEmail.value,
       password: userPassword.value,
     };
-    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/register`, {
+    const response = await fetch(`http://localhost:3000/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +107,7 @@ async function renderBoardPage() {
    console.log(document.querySelector(".invite-form"));
   document.querySelector(".invite-form").style.visibility = "hidden";
 
-  const responseData = await fetch(`https://calm-mesa-67876.herokuapp.com/getUserData`, {
+  const responseData = await fetch(`http://localhost:3000/getUserData`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -138,14 +144,44 @@ async function renderBoardPage() {
   userData.user.forEach((boardDetail) => {
     console.log("board Name", boardDetail.boardName);
     let board = `
-                    <div onclick=goToTrelloPage(event,'${boardDetail._id}','${boardDetail.refBoardId}') class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center;
-                    background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin-top:10px">
+                   <div class="user-board-container" style=" background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin: 20px;
+                   border: 1px solid white;">
+                    <div  class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center; flex-wrap:wrap;
+                    margin-top:10px; position:relative">
+                    <a onclick=deleteBoard(event,'${boardDetail._id}') style="position: absolute;top: 9px;left: 87%; cursor:pointer"><i  class="far fa-trash-alt"></i></a>
                     <h3>${boardDetail.boardName}</h3>
+                    </div>
+                    <div class="button-container mb-3" style="display:flex;justify-content:center">
+                    <button style="width:100px" onclick=goToTrelloPage(event,'${boardDetail._id}','${boardDetail.refBoardId}') class="btn btn-success mt-3">Go</button>
+                    </div>
                     </div>
                 `;
     userBoard.insertAdjacentHTML("afterbegin", board);
   });
 }
+
+async function deleteBoard(event, id) {
+  //update
+  try {
+    const response = await fetch(
+      `https://calm-mesa-67876.herokuapp.com/deleteUserBoard/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: JSON.parse(localStorage.getItem("user")).acessToken,
+        },
+        body: JSON.stringify(body),
+      }
+    );
+    let userBoard = document.querySelector(".user-board");
+    userBoard.innerHTML = "";
+    renderBoardPage();
+  } catch (err) {
+    alert(err);
+  }
+}
+
 
 async function login(event) {
   event.preventDefault();
@@ -160,7 +196,7 @@ async function login(event) {
     password: userPassword.value,
   };
   try {
-    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/login`, {
+    const response = await fetch(`http://localhost:3000/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -193,7 +229,7 @@ async function uploadTrelloDataToDB() {
     const progressItems = JSON.parse(localStorage.getItem("progressItems"));
     const completeItems = JSON.parse(localStorage.getItem("completeItems"));
     const onHoldItems = JSON.parse(localStorage.getItem("onHoldItems"));
-    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/uploadData/${_id}`, {
+    const response = await fetch(`http://localhost:3000/uploadData/${_id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -215,7 +251,7 @@ async function uploadTrelloDataToDB() {
 async function logout(event) {
   try {
     document.querySelector(".invite-form").style.visibility = "hidden";
-    const response = await fetch(`https://calm-mesa-67876.herokuapp.com/logout`, {
+    const response = await fetch(`http://localhost:3000/logout`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
