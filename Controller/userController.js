@@ -185,14 +185,18 @@ module.exports={
 		
 	},
 	async delBoard(req, res) {
-		console.log(req.params);
+		console.log('params id',req.params);
 		try {
+		  console.log('one')
 		  const delBoard = await boardModel.findOneAndDelete({
 			_id: req.params.id,
 		  });
-		  const delRefBoard = await boardModel.findOneAndDelete({
-			refBoardId: req.params.id,
-		  });
+		  const refBoard = await boardModel.findOneAndDelete({
+			refBoardId:req.params.id
+		  })
+		  console.log('one')
+		  console.log('delBoard =',delBoard);
+		  console.log('refBoard=',refBoard);
 		  return res.status(200).send({
 			status: "success",
 			msg: "deleted sucessfully",

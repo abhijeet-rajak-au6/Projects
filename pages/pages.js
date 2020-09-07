@@ -229,7 +229,20 @@ async function inviteUser(event){
       })
       console.log(emailSendResponse);
       if (!emailSendResponse.ok) {
-        throw new Error((await emailSendResponse.json()).msg);
+        // document.querySelector('.trello').style.visibility='hidden';
+        localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello")
+        );
+        document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+        document.querySelector(".trello").style.visibility = "hidden";
+        document.querySelector(".invite-form").style.visibility = "hidden";
+
+        
+        // throw new Error((await emailSendResponse.json()).msg);
       }
   }
   catch(err){
@@ -325,8 +338,20 @@ async function removeBoard(event){
           boardName:event.target.boardName.value
         })
     })
-    const createBoardData = await createBoard.json();
-    renderBoardPage();
+    if (!createBoard.ok) {
+      localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".board-container")
+        );
+      // throw new Error((await createBoard.json()).msg);
+
+    }
+    else{
+      const createBoardData = await createBoard.json();
+      renderBoardPage();
+
+    }
 
   //   console.log(createBoardData);
   //   let board =` <div class="user-board-container" style=" background-color:rgba(0, 0, 0, 0.4); border-radius:5px;margin: 20px;
@@ -356,24 +381,42 @@ async function getTrelloData(_id){
           'Content-Type':'application/json',
           'Authorization':JSON.parse(localStorage.getItem('user')).acessToken
       },
-     
   });
-  
-  const trelloData = await trelloDataResponse.json();
-  console.log('trello data',trelloData);
-  // console.log(userData.user[0]);
-  if(trelloData.board){
-    console.log(trelloData.board);
-    console.log("user Data",trelloData.board.completeItems);
-    completeListArray=trelloData.board.completeItems;
-    backlogListArray=trelloData.board.backlogItems;
-    progressListArray=trelloData.board.progressItems;
-    onHoldListArray=trelloData.board.onHoldItems;
-    console.log(completeListArray,backlogListArray,progressListArray,onHoldListArray);
-    listArray=[backlogListArray,progressListArray,completeListArray,onHoldListArray];
-    console.log('list Array',listArray);
-    updateDOM();
+  console.log(trelloDataResponse);
+  if (!trelloDataResponse.ok) {
+        
+        localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello")
+        );
+        document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+        document.querySelector(".trello").style.visibility = "hidden";
+        document.querySelector(".invite-form").style.visibility = "hidden";
+
+    // throw new Error((await trelloDataResponse.json()).msg);
   }
+  else{
+
+    const trelloData = await trelloDataResponse.json();
+    console.log('trello data',trelloData);
+    // console.log(userData.user[0]);
+    if(trelloData.board){
+      console.log(trelloData.board);
+      console.log("user Data",trelloData.board.completeItems);
+      completeListArray=trelloData.board.completeItems;
+      backlogListArray=trelloData.board.backlogItems;
+      progressListArray=trelloData.board.progressItems;
+      onHoldListArray=trelloData.board.onHoldItems;
+      console.log(completeListArray,backlogListArray,progressListArray,onHoldListArray);
+      listArray=[backlogListArray,progressListArray,completeListArray,onHoldListArray];
+      console.log('list Array',listArray);
+      updateDOM();
+    }
+  }
+  
 
 }
 
@@ -401,8 +444,8 @@ function goToTrelloPage(event,board_id,refBoardId){
         document.querySelectorAll('.add-btn').forEach(addBtn=>addBtn.style.visibility='visible');
         document.querySelector('.trello').style.visibility='visible';
         document.querySelector('.invite-form').style.visibility='visible';
+        getTrelloData(board_id);
     },500);
-    getTrelloData(board_id);
     
 }
 

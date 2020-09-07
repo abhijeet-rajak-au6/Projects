@@ -12,6 +12,6 @@ router.post('/checkAuth',authentication);
 router.post('/uploadData/:_id',authentication,uploadData);
 router.post('/sendEmail/:email/:trelloId',authentication,sendMail);
 router.get('/acceptInvitation/:email/:trelloId',acceptInvite);
-router.delete('/deleteUserBoard/:id',delBoard);
+router.delete('/deleteUserBoard/:id',authentication,delBoard);
 // router.get('/getUserData',authentication,getUserData)
 module.exports = router;

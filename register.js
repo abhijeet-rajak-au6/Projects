@@ -1,3 +1,4 @@
+
 const body = document.querySelector("body");
 function removeElementFromDOM(pageRender, ...elementToBeRemoved) {
   // head.insertAdjacentHTML('beforeend',' <link rel="stylesheet" href="./style.css" />');
@@ -114,57 +115,72 @@ async function renderBoardPage() {
       'Authorization': JSON.parse(localStorage.getItem("user")).acessToken,
     },
   });
-  // console.log(responseData);
-  const userData = await responseData.json();
-  console.log('userData',userData);
-  // console.log(userData.user[0]);
-  // console.log("user Data",userData.user.completeItems);
-  // completeListArray=userData.user.completeItems;
-  // backlogListArray=userData.user.backlogItems;
-  // progressListArray=userData.user.progressItems;
-  // onHoldListArray=userData.user.onHoldItems;
-  // console.log(completeListArray,backlogListArray,progressListArray,onHoldListArray);
-  // listArray=[backlogListArray,progressListArray,completeListArray,onHoldListArray];
-  // console.log('list Array',listArray);
-  // updateDOM();
-  const form = document.querySelector(".login");
-  const trelloPage = document.querySelector(".trello");
-  console.log(trelloPage.style.visibility);
-  console.log(trelloPage.style.visibility.includes("visible"));
-  if (form) {
-    removeElementFromDOM(createBoard, form);
-  } else if (trelloPage.style.visibility.includes("visible")) {
-    trelloPage.style.visibility = "hidden";
-    removeElementFromDOM(createBoard, trelloPage);
-    document
-      .querySelectorAll(".add-btn")
-      .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+  if (!responseData.ok) {
+    localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello")
+        );
+        document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+        document.querySelector(".trello").style.visibility = "hidden";
+        document.querySelector(".invite-form").style.visibility = "hidden";
   }
-  const userBoard = document.querySelector(".user-board");
-  userData.user.forEach((boardDetail) => {
-    console.log("board Name", boardDetail.boardName);
-    let board = `
-                   <div class="user-board-container" style=" background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin: 20px;
-                   border: 1px solid white;">
-                    <div  class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center; flex-wrap:wrap;
-                    margin-top:10px; position:relative">
-                    <a onclick=deleteBoard(event,'${boardDetail._id}') style="position: absolute;top: 9px;left: 87%; cursor:pointer"><i  class="far fa-trash-alt"></i></a>
-                    <h3>${boardDetail.boardName}</h3>
-                    </div>
-                    <div class="button-container mb-3" style="display:flex;justify-content:center">
-                    <button style="width:100px" onclick=goToTrelloPage(event,'${boardDetail._id}','${boardDetail.refBoardId}') class="btn btn-success mt-3">Go</button>
-                    </div>
-                    </div>
-                `;
-    userBoard.insertAdjacentHTML("afterbegin", board);
-  });
+  else{
+    // console.log(responseData);
+    const userData = await responseData.json();
+    console.log('userData',userData);
+    // console.log(userData.user[0]);
+    // console.log("user Data",userData.user.completeItems);
+    // completeListArray=userData.user.completeItems;
+    // backlogListArray=userData.user.backlogItems;
+    // progressListArray=userData.user.progressItems;
+    // onHoldListArray=userData.user.onHoldItems;
+    // console.log(completeListArray,backlogListArray,progressListArray,onHoldListArray);
+    // listArray=[backlogListArray,progressListArray,completeListArray,onHoldListArray];
+    // console.log('list Array',listArray);
+    // updateDOM();
+    const form = document.querySelector(".login");
+    const trelloPage = document.querySelector(".trello");
+    console.log(trelloPage.style.visibility);
+    console.log(trelloPage.style.visibility.includes("visible"));
+    if (form) {
+      removeElementFromDOM(createBoard, form);
+    } else if (trelloPage.style.visibility.includes("visible")) {
+      trelloPage.style.visibility = "hidden";
+      removeElementFromDOM(createBoard, trelloPage);
+      document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+    }
+    const userBoard = document.querySelector(".user-board");
+    userData.user.forEach((boardDetail) => {
+      console.log("board Name", boardDetail.boardName);
+      let board = `
+                     <div class="user-board-container" style=" background-color:rgba(0, 0, 0, 0.4); border-radius:5px; margin: 20px;
+                     border: 1px solid white;">
+                      <div  class="user-board-item" style="width:200px;height:200px;display:flex;justify-content:center;align-items:center; flex-wrap:wrap;
+                      margin-top:10px; position:relative">
+                      <a onclick=deleteBoard(event,'${boardDetail._id}') style="position: absolute;top: 9px;left: 87%; cursor:pointer"><i  class="far fa-trash-alt"></i></a>
+                      <h3>${boardDetail.boardName}</h3>
+                      </div>
+                      <div class="button-container mb-3" style="display:flex;justify-content:center">
+                      <button style="width:100px" onclick=goToTrelloPage(event,'${boardDetail._id}','${boardDetail.refBoardId}') class="btn btn-success mt-3">Go</button>
+                      </div>
+                      </div>
+                  `;
+      userBoard.insertAdjacentHTML("afterbegin", board);
+    });
+  }
 }
 
 async function deleteBoard(event, id) {
   //update
+  
   try {
     const response = await fetch(
-      `https://calm-mesa-67876.herokuapp.com/deleteUserBoard/${id}`,
+      `http://localhost:3000/deleteUserBoard/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -174,9 +190,20 @@ async function deleteBoard(event, id) {
         body: JSON.stringify(body),
       }
     );
-    let userBoard = document.querySelector(".user-board");
-    userBoard.innerHTML = "";
-    renderBoardPage();
+    if (!response.ok) {
+      // throw new Error((await response.json()).msg);
+      localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".board-container")
+        );
+    }
+    else{
+
+      let userBoard = document.querySelector(".user-board");
+      userBoard.innerHTML = "";
+      renderBoardPage();
+    }
   } catch (err) {
     alert(err);
   }
@@ -242,6 +269,19 @@ async function uploadTrelloDataToDB() {
         onHoldItems,
       }),
     });
+    if (!response.ok) {
+      // throw new Error((await response.json()).msg);
+      localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello")
+        );
+        document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+        document.querySelector(".trello").style.visibility = "hidden";
+        document.querySelector(".invite-form").style.visibility = "hidden";
+    }
   } catch (err) {
     console.log(err);
     alert(err);
@@ -259,7 +299,23 @@ async function logout(event) {
       },
     });
     if (!response.ok) {
-      throw new Error((await response.json()).msg);
+      localStorage.removeItem("user");
+      if (document.querySelector(".board-container")) {
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello"),
+          document.querySelector(".board-container")
+        );
+      } else {
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello")
+        );
+      }
+      document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+      document.querySelector(".trello").style.visibility = "hidden";
     } else {
       const data = await response.json();
       alert(data.msg);
@@ -284,7 +340,7 @@ async function logout(event) {
       document.querySelector(".trello").style.visibility = "hidden";
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     alert(err);
   }
 }

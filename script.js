@@ -174,11 +174,14 @@
       console.log('current Board',currentBoard);
       let trelloData = await getBoardDetails(currentBoard);
       console.log('trello Data=',trelloData);
-      if(trelloData.board.refBoardId!==null)
-        socket.emit("update-trello",trelloData.board.refBoardId,listArray);
-      else
-        socket.emit("update-trello",trelloData.board._id,listArray);
-      uploadTrelloDataToDB();
+      if(trelloData){
+        if(trelloData.board.refBoardId!==null)
+          socket.emit("update-trello",trelloData.board.refBoardId,listArray);
+        else
+          socket.emit("update-trello",trelloData.board._id,listArray);
+        uploadTrelloDataToDB();
+
+      }
     }
   }
 
@@ -253,9 +256,24 @@
         'Authorization': JSON.parse(localStorage.getItem("user")).acessToken,
       },
     });
+    if (!response.ok) {
+      localStorage.removeItem("user");
+        removeElementFromDOM(
+          renderLoginPage,
+          document.querySelector(".trello")
+        );
+        document
+        .querySelectorAll(".add-btn")
+        .forEach((addBtn) => (addBtn.style.visibility = "hidden"));
+        document.querySelector(".trello").style.visibility = "hidden";
+        document.querySelector(".invite-form").style.visibility = "hidden";
+    }
+    else{
+      
+      const trelloData = response.json();
+       return trelloData;
+    }
 
-    const trelloData = response.json();
-     return trelloData;
   }
 
   async function dropItem(event) {
@@ -268,12 +286,15 @@
     // console.log('refBoard',refBoard);
     console.log('current Board',currentBoard);
     let trelloData = await getBoardDetails(currentBoard);
-    console.log('trello Data=',trelloData);
-    if(trelloData.board.refBoardId!==null)
-      socket.emit("update-trello",trelloData.board.refBoardId,listArray);
-    else
-      socket.emit("update-trello",trelloData.board._id,listArray);
-    uploadTrelloDataToDB();
+    if(trelloData){
+      console.log('trello Data=',trelloData);
+      if(trelloData.board.refBoardId!==null)
+        socket.emit("update-trello",trelloData.board.refBoardId,listArray);
+      else
+        socket.emit("update-trello",trelloData.board._id,listArray);
+      uploadTrelloDataToDB();
+
+    }
   }
 
   socket.on("trello", (message,room) => {
